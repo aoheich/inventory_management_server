@@ -4,6 +4,10 @@ import type { transaction_dto } from "../types/transaction_dto.js";
 
 export const create_transaction = async (data: transaction_dto, user_id: number) => {
 
+    if (data.type === "OUT" && data.supplier_id !== undefined) {
+        throw new AppError("Supplier_id cannot be provided for OUT transactions", 400);
+    }
+
     const product = await prisma.product.findUnique({
         where: {
             id: data.product_id
@@ -14,6 +18,17 @@ export const create_transaction = async (data: transaction_dto, user_id: number)
         throw new AppError("Product Not Found", 404)
     }
 
+
+    if (data.supplier_id) {
+        const supplier = await prisma.supplier.findUnique({
+            where: {
+                id: data.supplier_id
+            }
+        })
+        if (!supplier) {
+            throw new AppError("Supplier Not Found", 404)
+        }
+    }
 
     const transaction = await prisma.$transaction(async (tn) => {
 
@@ -48,12 +63,14 @@ export const create_transaction = async (data: transaction_dto, user_id: number)
             })
         }
 
+
         const new_transaction = await tn.transaction.create({
             data: {
                 product_id: data.product_id,
                 quantity: data.quantity,
                 type: data.type,
                 user_id: user_id,
+                supplier_id: data.supplier_id || null
             }
         })
 
@@ -89,13 +106,13 @@ export const get_transaction = async (transaction_id: string) => {
     }
 
     return transaction
-}   
+}
 
 export const get_transactions = async (page: number) => {
 
     const transactions = await prisma.transaction.findMany({
         take: 10,
-        skip: (page - 1)* 10,
+        skip: (page - 1) * 10,
         orderBy: {
             date_created: "desc"
         },
@@ -121,7 +138,7 @@ export const get_transactions = async (page: number) => {
         transactions: transactions,
         total: count,
         current_page: page,
-        pages: Math.ceil(count/10)
+        pages: Math.ceil(count / 10)
     }
 
 }

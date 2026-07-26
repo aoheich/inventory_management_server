@@ -56,7 +56,7 @@ export const product_update = async (req: Request<{id: string}, {}, {name?: stri
 
 }
 
-export const product_delete = async (req: Request<{id: string}, {}, {}>, res: Response<{message: string}>) => {
+export const product_delete = async (req: Request<{id: string}>, res: Response<{message: string}>) => {
    
     const product_id = Number(req.params.id)
 
