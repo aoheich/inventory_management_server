@@ -6,7 +6,7 @@ export const refresh_access_token = async (token: string) => {
 
     const payload = verify_refresh_token(token);
 
-    const db_user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: {
             id: payload.user_id
         }, select: {
@@ -17,23 +17,54 @@ export const refresh_access_token = async (token: string) => {
         }
     })
 
-    if (!db_user) {
+    if (!user) {
         throw new AppError("Unauthorized", 401)
     }
 
 
-    if (payload.token_version !== db_user.token_version) {
+    if (payload.token_version !== user.token_version) {
         throw new AppError("Token Invalid", 401)
     }
 
     const data = {
-        user_id: db_user.id, 
-        role: db_user.role, 
-        token_version: db_user.token_version
+        user_id: user.id,
+        role: user.role,
+        token_version: user.token_version
     }
 
     const access_token = sign_access_token(data)
 
     return access_token
-    
+
+}
+
+export const clear_refresh_token = async (token: string) => {
+
+    const payload = verify_refresh_token(token)
+
+    const user = await prisma.user.findUnique({
+        where: {
+            id: payload.user_id
+        }
+    })
+
+    if (!user) {
+        throw new AppError("Unauthorized", 401)
+    }
+
+    if (payload.token_version !== user.token_version) {
+        throw new AppError("Invalid Token", 401);
+    }
+
+    await prisma.user.update({
+        data: {
+            token_version: {
+                increment: 1
+            }
+        }, where: {
+            id: user.id
+        }
+    })
+
+
 }

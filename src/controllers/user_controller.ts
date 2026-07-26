@@ -7,7 +7,7 @@ import { sign_access_token, sign_token, verify_refresh_token } from "../utils/jw
 import strict from "node:assert/strict";
 import type { auth_user_type } from "../types/auth_response_type.js";
 import AppError from "../app_error.js";
-import { refresh_access_token } from "../services/jwt_services.js";
+import { clear_refresh_token, refresh_access_token } from "../services/jwt_services.js";
 
 export const create_user =  async (req:Request<{}, {}, user_dto>, res:Response<api_response<auth_user_type>>) => {
    
@@ -44,13 +44,26 @@ export const refresh = async (req:Request<{}>, res:Response<api_response<string>
     const refresh_token = req.cookies.refresh_token
 
     if(!refresh_token) {
-        throw new AppError("Refresh Token Required",400)
+        throw new AppError("Refresh Token Required", 400)
     }
 
     const access_token = await refresh_access_token(refresh_token)
     
 
     res.status(200).json({ message: "New Access Token", data: access_token})
+}
+
+export const logout = async (req:Request<{}>, res:Response<{message: string}>) => {
+    const refresh_token = req.cookies.refresh_token
+
+    if(!refresh_token) {
+        throw new AppError("Refresh Token Required", 401)
+    }
+
+    await clear_refresh_token(refresh_token)
+
+    res.clearCookie("refresh_token", { httpOnly: true, secure: false, sameSite: "strict" })
+    res.status(200).json({message: "Logout Successfull"})
 }
 
 export const current_user = async (req:Request, res:Response<api_response<user_type>>) => {
