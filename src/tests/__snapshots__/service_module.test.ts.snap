@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`tests the transaction_service > tests a failed transaction creation 1`] = `[Error: Database Error: Transaction Failed]`;
