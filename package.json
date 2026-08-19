@@ -7,7 +7,7 @@
   "scripts": {
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage",
+    "test:e2e": "vitest",
     "test:ui": "vitest --ui",
     "test:verbose": "vitest --reporter=verbose",
     "start": "tsx watch --clear-screen=false server.ts"
@@ -16,14 +16,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^7.8.0",
+    "@prisma/adapter-mariadb": "^7.9.1",
+    "@prisma/client": "^7.9.1",
     "@redis/client": "^6.1.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "mariadb": "^3.5.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -31,8 +33,10 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.1.1",
+    "@types/supertest": "^7.2.1",
     "@vitest/ui": "^4.1.10",
-    "prisma": "^7.8.0",
+    "prisma": "^7.9.1",
+    "supertest": "^7.2.2",
     "tsx": "^4.23.1",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"

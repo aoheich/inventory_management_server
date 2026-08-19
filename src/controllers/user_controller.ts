@@ -3,8 +3,7 @@ import type { user_dto } from "../types/user_dto.js";
 import { register_user, login_user, get_current_user, get_all_users, delete_user } from "../services/user_services.js"
 import { type api_response } from "../types/response_type.js";
 import { type user_type } from "../types/user_type.js";
-import { sign_access_token, sign_token, verify_refresh_token } from "../utils/jwt.js";
-import strict from "node:assert/strict";
+import { sign_token } from "../utils/jwt.js";
 import type { auth_user_type } from "../types/auth_response_type.js";
 import AppError from "../app_error.js";
 import { clear_refresh_token, refresh_access_token } from "../services/jwt_services.js";
