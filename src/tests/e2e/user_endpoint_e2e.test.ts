@@ -24,7 +24,7 @@ describe("POST /api/user/register", () => {
         expect(response.headers["set-cookie"]).toEqual(expect.arrayContaining([expect.stringContaining("refresh_token")]))
 
     })
-    it.only("should create a new user successfully", async () => {
+    it("should create a new user successfully", async () => {
 
         const response = await request(app)
             .post("/api/user/register")
